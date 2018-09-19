@@ -26,12 +26,21 @@ export default function initSync(serverComm, isOnline) {
     };
 
     serverComm(url, request, options)
-        .then((data) => {
-          if (!data.success) {
+        .then((remoteData) => {
+          // TODO: remove from data.changes array tables (table) that don't match options.tables
+
+          if (!remoteData.success) {
             // Server didn't accept our changes. Stop trying to sync
-            onError(data.errorMessage, Infinity);
+            onError(remoteData.errorMessage, Infinity);
           } else {
-            // If we have no clientIdentity yet, then this was the first call
+            let data = remoteData;
+
+            if (options.table) {
+              data.changes = remoteData.changes.filter( change => {
+               return change.table === options.table;
+              });
+            }
+              // If we have no clientIdentity yet, then this was the first call
             // Make sure we save the clientIdentity and then schedule the next call
             if (!context.clientIdentity) {
               context.clientIdentity = data.clientIdentity;
