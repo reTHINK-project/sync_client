@@ -16,14 +16,16 @@ export default function initSync(serverComm, isOnline) {
     onSuccess,
     onError
   ) {
+    let observer = options.hasOwnProperty('observer') ? options.observer : false;
+
     const request = {
       // Will not be defined the first time we call the server
       clientIdentity: context.clientIdentity,
-      baseRevision,
+      baseRevision: observer ? 1 : baseRevision,
       partial,
-      changes,
-      syncedRevision,
-    };
+      changes: observer ? [] : changes,
+      syncedRevision: observer ? 1 : syncedRevision,
+    }; 
 
     serverComm(url, request, options)
         .then((remoteData) => {
