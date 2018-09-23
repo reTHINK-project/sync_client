@@ -21,10 +21,10 @@ export default function initSync(serverComm, isOnline) {
     const request = {
       // Will not be defined the first time we call the server
       clientIdentity: context.clientIdentity,
-      baseRevision: observer ? 1 : baseRevision,
+      baseRevision: options.baseRevision ? options.baseRevision : baseRevision,
       partial,
       changes: observer ? [] : changes,
-      syncedRevision: observer ? 1 : syncedRevision,
+      syncedRevision: options.syncedRevision ? options.syncedRevision : syncedRevision,
     }; 
 
     serverComm(url, request, options)
